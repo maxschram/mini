@@ -1,17 +1,75 @@
 require 'socket'
-require 'uri'
+require 'rack'
+require 'stringio'
 
-webserver = TCPServer.new('localhost', 3000)
-puts "Starting server"
-while (socket = webserver.accept)
-  request = socket.gets
-  response = "Hello World"
-  socket.print "HTTP/1.1 200 OK\r\n" +
-    "Content-Type: text/html\r\n" +
-    "Content-Length: #{response.bytesize}\r\n" +
-    "Connection: close\r\n"
-  socket.print "\r\n"
-  socket.print response
 
-  socket.close
+class WebServerLite
+  attr_reader :app, :host, :port
+  def initialize(app, host: 'localhost', port: 3000)
+    @app = app
+    @host = host
+    @port = port
+  end
+
+  def start
+    tcp_server = TCPServer.new(host, port)
+
+    puts "Server listening on #{host}:#{port}"
+
+    loop do
+      socket = tcp_server.accept
+      request = socket.gets
+      response = ''
+
+      puts request
+
+      env = new_env(*request.split)
+      status, headers, body = app.call(env)
+
+      response << "HTTP/1.1 #{status} #{status}\r\n"
+      headers.each do |k, v|
+        response << "#{k}: #{v}\r\n"
+      end
+      response << "Connection: close\r\n"
+
+      socket.print response
+      socket.print "\r\n"
+
+      body.each do |chunk|
+        socket.print chunk
+      end
+
+      socket.close
+    end
+  end
+
+  def new_env(method, location, *args)
+    {
+      'REQUEST_METHOD'   => method,
+      'SCRIPT_NAME'      => '',
+      'PATH_INFO'        => location,
+      'QUERY_STRING'     => location.split('?').last,
+      'SERVER_NAME'      => host,
+      'SERVER_PORT'      => port,
+      'rack.version'     => Rack.version.split('.'),
+      'rack.url_scheme'  => 'http',
+      'rack.input'       => StringIO.new(''),
+      'rack.errors'      => StringIO.new(''),
+      'rack.multithread' => false,
+      'rack.run_once'    => false
+    }
+  end
 end
+
+module Rack
+  module Handler
+    class WebServerLite
+      def self.run(app, options = {})
+        server = ::WebServerLite.new(app)
+        server.start
+      end
+    end
+  end
+end
+
+Rack::Handler.register('webserver_lite', 'Rack::Handler::WebServerLite')
