@@ -15,31 +15,32 @@ class WebServerLite
     tcp_server = TCPServer.new(host, port)
 
     puts "Server listening on #{host}:#{port}"
-
     loop do
-      socket = tcp_server.accept
-      request = socket.gets
-      response = ''
+      Thread.start(tcp_server.accept) do |socket|
+        # socket = tcp_server.accept
+        request = socket.gets
+        response = ''
 
-      puts request
+        puts request
 
-      env = new_env(*request.split)
-      status, headers, body = app.call(env)
+        env = new_env(*request.split)
+        status, headers, body = app.call(env)
 
-      response << "HTTP/1.1 #{status} #{status}\r\n"
-      headers.each do |k, v|
-        response << "#{k}: #{v}\r\n"
+        response << "HTTP/1.1 #{status} #{status}\r\n"
+        headers.each do |k, v|
+          response << "#{k}: #{v}\r\n"
+        end
+        response << "Connection: close\r\n"
+
+        socket.print response
+        socket.print "\r\n"
+
+        body.each do |chunk|
+          socket.print chunk
+        end
+
+        socket.close
       end
-      response << "Connection: close\r\n"
-
-      socket.print response
-      socket.print "\r\n"
-
-      body.each do |chunk|
-        socket.print chunk
-      end
-
-      socket.close
     end
   end
 
