@@ -5,10 +5,10 @@ require_relative 'lib/connection'
 class Mini
   attr_reader :app, :host, :port
 
-  def initialize(app, host: 'localhost', port: 3000)
+  def initialize(app, options)
     @app = app
-    @host = host
-    @port = port
+    @host = options[:Host] || 'localhost'
+    @port = options[:Port] || 3000
   end
 
   def start
@@ -23,7 +23,7 @@ module Rack
   module Handler
     class Mini
       def self.run(app, options = {})
-        server  = ::Mini.new(app)
+        server  = ::Mini.new(app, options)
         server.start
       end
     end

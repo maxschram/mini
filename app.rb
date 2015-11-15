@@ -1,8 +1,7 @@
-app = Proc.new do |env|
-  ["200", {'Content-Type' => 'text/html'}, ["Hello world"]]
+class App
+  def self.call(env)
+    ["200", {'Content-Type' => 'text/html'}, ["Hello world"]]
+  end
 end
 
 Rack::Handler.try_require('./', 'mini')
-
-handler = Rack::Handler.pick(['mini', 'thin', 'webrick'])
-handler.run(app)
