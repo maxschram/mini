@@ -1,6 +1,5 @@
 require 'rack'
 require 'eventmachine'
-require_relative 'lib/connection'
 
 class Mini
   attr_reader :app, :host, :port
@@ -31,4 +30,6 @@ module Rack
 end
 
 Rack::Handler.register('mini', 'Rack::Handler::Mini')
+
+require 'mini/connection'
 
