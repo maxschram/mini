@@ -15,6 +15,7 @@ class Connection < EventMachine::Connection
 
   def receive_data(data)
     @env = new_env(*data.split)
+    puts "#{env['REQUEST_METHOD']} #{env['PATH_INFO']}"
     EventMachine.defer(method(:pre_process), method(:post_process))
   end
 
@@ -45,12 +46,13 @@ class Connection < EventMachine::Connection
       'PATH_INFO'        => location,
       'QUERY_STRING'     => location.split('?').last,
       'SERVER_NAME'      => server.host,
-      'SERVER_PORT'      => server.port,
+      'SERVER_PORT'      => server.port.to_s,
       'rack.version'     => Rack.version.split('.'),
       'rack.url_scheme'  => 'http',
-      'rack.input'       => StringIO.new(''),
-      'rack.errors'      => StringIO.new(''),
-      'rack.multithread' => false,
+      'rack.input'       => StringIO.new('').set_encoding(Encoding::ASCII_8BIT),
+      'rack.errors'      => StringIO.new('').set_encoding(Encoding::ASCII_8BIT),
+      'rack.multithread' => true,
+      'rack.multiprocess' => true,
       'rack.run_once'    => false
     }
   end

@@ -12,6 +12,7 @@ class Mini
   end
 
   def start
+    puts "Listening on #{host}:#{port}"
     EventMachine.run do
       EventMachine.start_server(host, port, Connection, app, self)
     end
