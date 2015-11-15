@@ -15,7 +15,7 @@ class Connection < EventMachine::Connection
 
   def receive_data(data)
     @env = new_env(*data.split)
-    puts "#{env['REQUEST_METHOD']} #{env['PATH_INFO']}"
+    puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} -- #{env['REQUEST_METHOD']} #{env['PATH_INFO']}"
     EventMachine.defer(method(:pre_process), method(:post_process))
   end
 
