@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'mini'
+require 'byebug'
+
+config = File.join(Dir.pwd, 'config.ru')
+rackup_code = File.read(config)
+
+app = eval("Rack::Builder.new {( #{rackup_code}\n )}.to_app",
+           TOPLEVEL_BINDING,
+           config)
+
+Mini.new(app, {}).start
