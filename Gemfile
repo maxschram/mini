@@ -1,3 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'socket'
+gem 'eventmachine'
+gem 'rack'

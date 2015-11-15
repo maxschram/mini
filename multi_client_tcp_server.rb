@@ -1,7 +1,7 @@
 require 'socket'
 require 'rack'
 require 'stringio'
-
+require 'byebug'
 
 class WebServerLite
   attr_reader :app, :host, :port
