@@ -11,3 +11,6 @@ To start the server
 `rackup`
 OR
 `mini`
+
+### Example
+There is an example app and config in `/example`
