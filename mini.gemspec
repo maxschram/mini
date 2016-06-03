@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
 
   s.files = %w(README.md) +
-            DIR["{bin, example, lib}/**/*"]
+            Dir["{bin, example, lib}/**/*"]
 
-  s.add_dependency 'rack'
-  s.add_dependency 'eventmachine'
+  s.add_dependency 'rack', '~> 1.0'
+  s.add_dependency 'eventmachine', '~> 1.0'
 end
