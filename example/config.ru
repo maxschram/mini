@@ -1,3 +1,3 @@
 #\ -w -p 3000
 require './app'
-run App
+Rack::Handler::Mini.run App
