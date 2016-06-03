@@ -1,10 +1,11 @@
 Gem::Specification.new do |s|
   s.name = 'mini'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.executables << 'mini'
   s.date = '2016-06-02'
   s.summary = 'Super lightweight Rack compliant Web server'
   s.description = 'A very small Ruby web server'
+  s.homepage = 'https://github.com/maxschram/mini'
   s.authors = ['Max Schram']
   s.email = ''
   s.files = ['lib/mini.rb', 'lib/mini/connection.rb']
