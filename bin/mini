@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'mini'
-require 'byebug'
 
 config = File.join(Dir.pwd, 'config.ru')
 rackup_code = File.read(config)
